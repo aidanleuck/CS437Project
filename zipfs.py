@@ -2,7 +2,7 @@ import nltk
 import csv
 import matplotlib.pyplot as plt
 
-dataset_name = 'sample_dataset.csv'
+dataset_name = 'IMDB Dataset.csv'
 unigram_dict = {}
 bigram_dict = {}
 
@@ -12,7 +12,7 @@ def to_lower_case(s):
     return s
 
 # Process CSV file in dictionary
-with open(dataset_name) as csv_file:
+with open(dataset_name, encoding="utf8") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     for row in csv_reader:
@@ -41,12 +41,14 @@ uni_sorted = dict(sorted(unigram_dict.items(), key=lambda item: item[1], reverse
 bi_sorted = dict(sorted(bigram_dict.items(), key=lambda item: item[1], reverse=True))
 plt.yscale('log')
 plt.xscale('log')
+plt.ylabel("Frequency")
+plt.xlabel("Word Rank \n\n Top 5 words = " + str(list(uni_sorted.keys())[0:5]))
 plot1 = plt.figure(1)
 plt.plot(range(len(unigram_dict)), list(uni_sorted.values()))
 plot2 = plt.figure(2)
 plt.yscale('log')
 plt.xscale('log')
+plt.ylabel("Frequency")
+plt.xlabel("Bigram Rank \n\n Top 5 bigrams = " + str(list(bi_sorted.keys())[0:5]))
 plt.plot(range(len(bigram_dict)), list(bi_sorted.values()))
-print("Top 5 words = ", list(uni_sorted.keys())[0:5])
-print("Top 5 bigrams = ", list(bi_sorted.keys())[0:5])
 plt.show()
