@@ -2,7 +2,7 @@ import nltk
 import csv
 import matplotlib.pyplot as plt
 
-dataset_name = 'sample_dataset.csv'
+dataset_name = 'IMDB Dataset.csv'
 ratio_dict = {}
 unigram_dict = {}
 
@@ -25,6 +25,7 @@ with open(dataset_name, encoding="utf8") as csv_file:
                 else:
                     unigram_dict[word] = 1
                 ratio_dict[words_count] = len(unigram_dict)
+            line_count += 1
     print(str(line_count) +  " lines read.")
 
 plt.plot(range(len(ratio_dict)), list(ratio_dict.values()))
