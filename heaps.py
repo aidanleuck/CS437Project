@@ -6,7 +6,7 @@ dataset_name = 'sample_dataset.csv'
 ratio_dict = {}
 unigram_dict = {}
 
-with open(dataset_name) as csv_file:
+with open(dataset_name, encoding="utf8") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     line_count = 0
     words_count = 0
