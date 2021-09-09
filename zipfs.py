@@ -5,10 +5,9 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 import re
 
-dataset_name = 'sample_dataset.csv'
+dataset_name = 'sampel_dataset.csv'
 unigram_dict = {}
 bigram_dict = {}
-unwanted_tokens = ["'", ',', '.', '<br/>', '"', "/"]
 ps = PorterStemmer()
 stop_words = set(stopwords.words('english'))
 
@@ -34,7 +33,7 @@ with open(dataset_name, encoding="utf8") as csv_file:
             print(f'Column names are {", ".join(row)}')
             line_count += 1
         else:
-            regexPunc = r'\'|,|\.|\"|\/'
+            regexPunc = r',|\.|\"|\/|\)|\('
             regexHTML = r'<br\s?>'
             row = re.sub(regexPunc, '', row[0])
             row = re.sub(regexHTML, ' ', row)
