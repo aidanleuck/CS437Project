@@ -12,11 +12,6 @@ unwanted_tokens = ["'", ',', '.', '<br/>', '"', "/"]
 ps = PorterStemmer()
 stop_words = set(stopwords.words('english'))
 
-def to_lower_case(s):
-    for item in range(len(s)):
-        s[item] = str(s[item]).lower()
-    return s
-
 def check_word(s):
     if s.lower() in stop_words:
         return False

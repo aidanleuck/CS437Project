@@ -1,10 +1,20 @@
 import nltk
 import csv
 import matplotlib.pyplot as plt
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+import re
 
-dataset_name = 'IMDB Dataset.csv'
+dataset_name = 'sample_dataset.csv'
 ratio_dict = {}
 unigram_dict = {}
+ps = PorterStemmer()
+stop_words = set(stopwords.words('english'))
+
+def check_word(s):
+    if s.lower() in stop_words:
+        return False
+    return True
 
 with open(dataset_name, encoding="utf8") as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
@@ -15,16 +25,21 @@ with open(dataset_name, encoding="utf8") as csv_file:
             print(f'Column names are {", ".join(row)}')
             line_count += 1
         else:
-            uni_tokens = nltk.word_tokenize(row[0].lower())
-            bi_tokens = list(nltk.bigrams(row[0].lower().split()))
+            regexPunc = r'\'|,|\.|\"|\/'
+            regexHTML = r'<br\s?>'
+            row = re.sub(regexPunc, '', row[0])
+            row = re.sub(regexHTML, ' ', row)
+            uni_tokens = nltk.word_tokenize(row)
             for word in uni_tokens:
-                words_count += 1
-                freq = unigram_dict.get(word)
-                if freq:
-                    unigram_dict[word] += 1
-                else:
-                    unigram_dict[word] = 1
-                ratio_dict[words_count] = len(unigram_dict)
+                if check_word(word):
+                    words_count += 1
+                    word = ps.stem(word)
+                    freq = unigram_dict.get(word)
+                    if freq:
+                        unigram_dict[word] += 1
+                    else:
+                        unigram_dict[word] = 1
+                    ratio_dict[words_count] = len(unigram_dict)
             line_count += 1
     print(str(line_count) +  " lines read.")
 
