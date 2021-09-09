@@ -1,15 +1,34 @@
 import nltk
 import csv
 import matplotlib.pyplot as plt
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+import re
 
-dataset_name = 'IMDB Dataset.csv'
+dataset_name = 'sample_dataset.csv'
 unigram_dict = {}
 bigram_dict = {}
+unwanted_tokens = ["'", ',', '.', '<br/>', '"', "/"]
+ps = PorterStemmer()
+stop_words = set(stopwords.words('english'))
 
 def to_lower_case(s):
     for item in range(len(s)):
         s[item] = str(s[item]).lower()
     return s
+
+def check_word(s):
+    if s.lower() in stop_words:
+        return False
+    return True
+
+def check_tuple(s):
+    output = True
+    for word in s:
+        if not check_word(word):
+            output = False
+    return output
+
 
 # Process CSV file in dictionary
 with open(dataset_name, encoding="utf8") as csv_file:
@@ -20,20 +39,27 @@ with open(dataset_name, encoding="utf8") as csv_file:
             print(f'Column names are {", ".join(row)}')
             line_count += 1
         else:
-            uni_tokens = nltk.word_tokenize(row[0].lower())
-            bi_tokens = list(nltk.bigrams(row[0].lower().split()))
+            regexPunc = r'\'|,|\.|\"|\/'
+            regexHTML = r'<br\s?>'
+            row = re.sub(regexPunc, '', row[0])
+            row = re.sub(regexHTML, ' ', row)
+            uni_tokens = nltk.word_tokenize(row)
+            bi_tokens = list(nltk.bigrams(row.split()))
             for word in uni_tokens:
-                freq = unigram_dict.get(word)
-                if freq:
-                    unigram_dict[word] += 1
-                else:
-                    unigram_dict[word] = 1
+                if check_word(word):
+                    word = ps.stem(word)
+                    freq = unigram_dict.get(word)
+                    if freq:
+                        unigram_dict[word] += 1
+                    else:
+                        unigram_dict[word] = 1
             for tup in bi_tokens:
-                freq = bigram_dict.get(tup)
-                if freq:
-                    bigram_dict[tup] += 1
-                else:
-                    bigram_dict[tup] = 1
+                if check_tuple(tup):
+                    freq = bigram_dict.get(tup)
+                    if freq:
+                        bigram_dict[tup] += 1
+                    else:
+                        bigram_dict[tup] = 1
             line_count += 1
     print(str(line_count) +  " lines read.")
 
