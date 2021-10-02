@@ -11,7 +11,6 @@ dataset_name = 'HW3\docs.csv'
 index = {}  # word: [docs]
 td_matrix = {}
 tt_matrix = {}
-documents = []
 ps = PorterStemmer()
 
 help = Helper(set(stopwords.words('english')))

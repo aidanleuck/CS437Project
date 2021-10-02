@@ -3,10 +3,9 @@ import pickle
 from Tokenize.tokenizer import Tokenizer
 
 tokenizer = Tokenizer(constant.FILEPATH)
-stop_words = tokenizer.generate_stopwords()
-with open('stop_words.pkl', 'wb') as outp:
-    pickle.dump(stop_words, outp, -1)
+with open(constant.STOPWORD_PATH, 'rb') as inp:
+    stop_words = pickle.load(inp)
 
-# with open('stop_words.pkl', 'rb') as inp:
-#     stop_words = pickle.load(inp)
-#     print(stop_words)
+index = tokenizer.generate_index(stop_words)
+with open(constant.INDEX_PATH, 'wb') as outp:
+    pickle.dump(index, outp, -1)
