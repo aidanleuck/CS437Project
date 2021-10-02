@@ -10,6 +10,11 @@ class Tokenizer:
     def __init__(self, dataset):
         self.dataset = dataset
 
+    def clean_line(self, line):
+        # Remove the following punctuation: ,."“/)(\[]{}!?:;'$&% and other random punctuation from strange csv file
+        regexPunc = r',|\.|\"|\“|\/|\)|\(|\\|\[|\]|\{|\}|\!|\?|\:|\;|\'|\$|\&|\%'
+        return re.sub(regexPunc, '', line) # Get rid of punctuation"
+
     def generate_stopwords(self):
         unigram_dict = {}
         stop_words = set(stopwords.words('english'))
@@ -22,9 +27,7 @@ class Tokenizer:
                     print(f'Column names are {", ".join(row)}')
                     line_count += 1
                 else:
-                    # Remove the following punctuation: ,."“/)(\[]{}!?:;'$&% and other random punctuation from strange csv file
-                    regexPunc = r',|\.|\"|\“|\/|\)|\(|\\|\[|\]|\{|\}|\!|\?|\:|\;|\'|\$|\&|\%'
-                    row = re.sub(regexPunc, '', row[0]) # Get rid of punctuation
+                    row = self.clean_line(row[0])
                     uni_tokens = nltk.word_tokenize(row)
                     for word in uni_tokens:
                         word = word.lower()
@@ -54,8 +57,7 @@ class Tokenizer:
                     print(f'Column names are {", ".join(row)}')
                     line_count += 1
                 else:
-                    regexPunc = r',|\.|\"|\“|\/|\)|\(|\\|\[|\]|\{|\}|\!|\?|\:|\;|\'|\$|\&|\%'
-                    row = re.sub(regexPunc, '', row[0]) # Get rid of punctuation
+                    row = self.clean_line(row[0])
                     tokens = nltk.word_tokenize(row)
                     for word in tokens:
                         word = word.lower()
@@ -68,11 +70,3 @@ class Tokenizer:
                     line_count += 1
             print(str(line_count) + " lines read.")
         return index
-
-        # plt.yscale('log')
-        # plt.xscale('log')
-        # plt.ylabel("Frequency")
-        # plt.xlabel("Word Rank \n\n Top 5 words = " + str(list(uni_sorted.keys())[0:5]))
-        # plot1 = plt.figure(1)
-        # plt.plot(range(len(unigram_dict)), list(uni_sorted.values()))
-        # plt.show()
