@@ -41,7 +41,7 @@ class Tokenizer:
             print(str(line_count) + " lines read.")
         uni_sorted = dict(sorted(unigram_dict.items(), key=lambda item: item[1], reverse=True))
         keys = list(uni_sorted.keys())
-        new_stop_words = list(uni_sorted.keys())[0:int(len(keys)/50)] # add top 2% to the stopwords list
+        new_stop_words = list(uni_sorted.keys())[0:int(len(keys)/20)] # add top 5% to the stopwords list
         stop_words.update(set(new_stop_words))
         return stop_words
 
@@ -64,9 +64,16 @@ class Tokenizer:
                         if word not in stop_words:
                             word = ps.stem(word)
                             if index.get(word):
-                                index[word].append(line_count-1)
+                                if index[word].get(line_count-1):
+                                    # Word has been seen before in this document
+                                    index[word][line_count-1] +=1
+                                else:
+                                    # Word has been seen before, but not in this document
+                                    index[word][line_count-1] = 1
                             else:
-                                index[word] = [line_count-1]
+                                # Word has not been seen before
+                                index[word] = {}
+                                index[word][line_count-1] = 1
                     line_count += 1
             print(str(line_count) + " lines read.")
         return index
