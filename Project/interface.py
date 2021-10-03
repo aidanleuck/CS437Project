@@ -345,7 +345,7 @@ if __name__ == '__main__':
     root.title("Information Retrieval")
     root.geometry("400x300")
     root.configure(background='#66cc00')
-    Label(root, bg='#66cc00', font = ('Times',21), text='OVA-cado Query').pack()
+    Label(root, bg='#66cc00', font = ('Times',21), text='AVO-cado Query').pack()
     combobox_autocomplete = Combobox_Autocomplete(root, list_of_items, highlightthickness=1)
     combobox_autocomplete.pack()
     Button(root, text="QUIT", fg="red", command=quit, bg='#66cc00', highlightbackground='#66cc00').pack()
