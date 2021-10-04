@@ -76,8 +76,14 @@
 
 import re
 
+from tkinter import *
+
+import PIL
+from PIL import ImageTk
+from PIL import Image
+
 try:
-    from tkinter import StringVar, Entry, Frame, Listbox, Scrollbar,Label,Button
+    from tkinter import StringVar, Entry, Frame, Listbox, Scrollbar, Label, Button, PhotoImage, Image
     from tkconstants import *
 except ImportError:
     from tkinter import StringVar, Entry, Frame, Listbox, Scrollbar
@@ -335,7 +341,7 @@ class Combobox_Autocomplete(Entry, object):
 
 if __name__ == '__main__':
     try:
-        from Tkinter import Tk
+        from tkinter import Tk
     except ImportError:
         from tkinter import Tk
 
@@ -345,7 +351,13 @@ if __name__ == '__main__':
     root.title("Information Retrieval")
     root.geometry("400x300")
     root.configure(background='#66cc00')
-    Label(root, bg='#66cc00', font = ('Times',21), text='AVO-cado Query').pack()
+
+    my_pic = PIL.Image.open("Images/avo2.png")
+    resized = my_pic.resize((150,100))
+    img = ImageTk.PhotoImage(resized)
+    # img = ImageTk.PhotoImage(file="Images/avocado.jpg")
+
+    Label(root, bg='#66cc00', image=img, font = ('Times',21), text='AVO-cado Query').pack()
     combobox_autocomplete = Combobox_Autocomplete(root, list_of_items, highlightthickness=1)
     combobox_autocomplete.pack()
     Button(root, text="QUIT", fg="red", command=quit, bg='#66cc00', highlightbackground='#66cc00').pack()
