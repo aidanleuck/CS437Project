@@ -11,5 +11,5 @@ from QLog.QueryLogParser import QueryLogParser
 
 if(__name__ == "__main__"):
     parser = QueryLogParser()
-    parser.mergeQueryLogs()
-    print("Hello")
+    parser.loadQueryLog("Test")
+    

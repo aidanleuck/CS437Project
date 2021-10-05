@@ -7,4 +7,5 @@ Clean-Data-02.txt
 Clean-Data-03.txt
 Clean-Data-04.txt
 Clean-Data-05.txt
+*.pickle
 __pycache__/
