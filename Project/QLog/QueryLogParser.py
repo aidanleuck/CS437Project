@@ -38,7 +38,7 @@ class QueryLogParser:
             fdesc = open(logPath, 'r')
             logContent = fdesc.read()
             self.__convertFileToIndex(logContent)
-            self.__writeToFrequencyFile()
+        self.__writeToFrequencyFile()
 
 
     # Converts each line into a query model
@@ -53,7 +53,8 @@ class QueryLogParser:
             # Makes sure we haven't found an empty line
             if(logEntry[0] != ''):
                 logEntryLength = len(logEntry[1].split(" "))
-                args = [logEntry[0], logEntry[1], logEntry[2]]
+                query = logEntry[1].lower()
+                args = [logEntry[0], query, logEntry[2]]
 
                 query = QueryModel(args)
                 

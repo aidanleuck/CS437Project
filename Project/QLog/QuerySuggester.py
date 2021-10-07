@@ -12,12 +12,14 @@ class QuerySuggester:
         self.categorizedIndex = {}
         self.queryAppears = 0
     def __indexCandidates(self,query):
+        query = query.lower()
         querySet = set(query.split(" "))
         for x in self.candidateList:
             for model in x:
                 if(model.query == query):
                     self.queryAppears+=1
                 else:
+                    lowerCaseQuery = model.query.lower()
                     currentWordSet = set(model.query.split(" "))
                     intersection = querySet.intersection(currentWordSet)
 
@@ -45,10 +47,12 @@ class QuerySuggester:
         if(len(keys) >= 5):
             suggestionList = keys[0:5]
         elif(len(keys) > 0 and len(keys) < 5):
-            suggestionList = keys[0:len(keys)-1]
+            suggestionList = keys[0:len(keys)]
         else:
             generalizedQuery = (query.split(" ")[0:queryLength-1])
             generalizedQuery = " ".join(generalizedQuery)
+            if(len(generalizedQuery) == 0):
+                return []
             return self.__getRanks(generalizedQuery)
         return suggestionList
 
