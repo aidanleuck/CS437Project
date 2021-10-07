@@ -31,6 +31,7 @@ class QuerySuggester:
         self.__indexCandidates(query)
         ranks = {}
         divisor = 1
+        queryLength = len(query.split(" "))
 
         if(self.queryAppears >=1):
             divisor = self.queryAppears
@@ -43,8 +44,12 @@ class QuerySuggester:
         suggestionList = []
         if(len(keys) >= 5):
             suggestionList = keys[0:5]
-        else:
+        elif(len(keys) > 0 and len(keys) < 5):
             suggestionList = keys[0:len(keys)-1]
+        else:
+            generalizedQuery = (query.split(" ")[0:queryLength-1])
+            generalizedQuery = " ".join(generalizedQuery)
+            return self.__getRanks(generalizedQuery)
         return suggestionList
 
     def getQuerySuggestions(self, query, range=3):
