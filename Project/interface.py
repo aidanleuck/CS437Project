@@ -1,81 +1,3 @@
-# import tkinter
-# from tkinter import *
-#
-#
-# # Function for checking the
-# # key pressed and updating
-# # the listbox
-# def checkkey(event):
-#
-#     value = event.widget.get()
-#     print(value)
-#
-#     # get data from l
-#     if value == '':
-#         # data = l
-#         data = ''
-#     else:
-#         data = []
-#         i=0
-#         for item in l:
-#             if value.lower() in item.lower():
-#                 data.append(item)
-#                 i+=1
-#             if i == 5:
-#                 break
-#     # update data in listbox
-#     update(data)
-#
-#
-# def update(data):
-#
-#     # clear previous data
-#     lb.delete(0, 'end')
-#
-#     # put new data
-#     for item in data:
-#         lb.insert('end', item)
-#
-#
-# # Driver code
-# l = ('C','C++','Java', 'Python','Perl', 'PHP','ASP','JS', 'people', 'ugly','frighten','deer','lyrical','chalk','society','capture','pet','mine','push','zonked','overwrought','draconian','modify','disease','expand','billowy','can','range','glorious','satisfying','cannon','cooperative','key','spoon','rabbits','lock','verdant','library','harm','crooked','flippant','erect','download','powerful','modern','do','cluttered','pest','fluttering','snotty','comparison','sound','infuse','confess','miniature','dreary','animal','paint','honorable','delicious','structure','victorious','mundane','determine','horrible','riddle','savor','burly','range','cowardly','windy','hop','rural','warlike','infest','accurate','medical','sea','quince','tendency','follow','curb','smooth','empty','hole','toy','buzz','print','precious','tasty','alike','drive','crazy','battle','wooden','jar')
-#
-# root = Tk()
-# root.title('Welcome')
-# root.geometry('400x300')
-# root.config(bg='#66cc00')
-#
-# Label(
-#     root,
-#     bg='#66cc00',
-#     font = ('Times',21),
-#     text='Query Entry'
-# ).pack()
-#
-# #creating text box
-# Entry(
-#     root,
-#     width=40,
-#     font=('Times', 18)
-# ).pack(padx=10,pady=10)
-# root.bind('<KeyRelease>', checkkey)
-#
-# #creating list box
-# scrollbar = tkinter.Scrollbar(root, orient="vertical")
-# lb = Listbox(
-#     root,
-#     width=60,
-#     bg='#66cc00',
-#     yscrollcommand=scrollbar.set
-# )
-# scrollbar.config(command=lb.yview)
-# scrollbar.pack(side='right',fill="y")
-# lb.pack(fill="both",expand=True,padx=10,pady=10)
-#
-# root.mainloop()
-
-import re
-
 from tkinter import *
 
 import PIL
@@ -89,6 +11,7 @@ except ImportError:
     from tkinter import StringVar, Entry, Frame, Listbox, Scrollbar
     from tkinter.constants import *
 
+from QLog.QuerySuggester import QuerySuggester
 
 def autoscroll(sbar, first, last):
     """Hide and show scrollbar as needed."""
@@ -136,8 +59,14 @@ class Combobox_Autocomplete(Entry, object):
                                 return False
 
                     def autocomplete_function(entry_data):  #vmcerda ~ sorts through list to find matching values
-                        escaped_entry_data = re.escape(entry_data)
-                        return [item for item in self.list_of_items if matches_function(escaped_entry_data, item)]
+                        spaces = sum(1 for match in re.finditer('\s+', entry_data))
+                        words = entry_data.split()
+                        if(spaces == len(words)):
+                            entry_data=entry_data.strip()
+                            suggester = QuerySuggester()
+                            suggestions = suggester.getQuerySuggestions(entry_data)
+                            # return [item for item in self.list_of_items if matches_function(escaped_entry_data,item)]
+                            return (suggestions)
 
                     self.autocomplete_function = autocomplete_function
 
@@ -167,6 +96,7 @@ class Combobox_Autocomplete(Entry, object):
         self.bind("<Down>", self._next)
         self.bind('<Control-n>', self._next)
         self.bind('<Control-p>', self._previous)
+        self.bind("<Delete>", self._delete)
 
         self.bind("<Return>", self._update_entry_from_listbox)
         self.bind("<Escape>", lambda event: self.unpost_listbox())
@@ -204,7 +134,7 @@ class Combobox_Autocomplete(Entry, object):
         listbox_frame = Frame()
 
         self._listbox = Listbox(listbox_frame, background="white", selectmode=SINGLE, activestyle="none",
-                                exportselection=False, bg='#66cc00')
+                                exportselection=False)
         self._listbox.grid(row=0, column=0,sticky = N+E+W+S)
 
         self._listbox.bind("<ButtonRelease-1>", self._update_entry_from_listbox)
@@ -213,6 +143,7 @@ class Combobox_Autocomplete(Entry, object):
 
         self._listbox.bind('<Control-n>', self._next)
         self._listbox.bind('<Control-p>', self._previous)
+        self._listbox.bind('<Delete>', self._delete)
 
         if self._use_vscrollbar:
             vbar = Scrollbar(listbox_frame, orient=VERTICAL, command= self._listbox.yview)
@@ -337,7 +268,9 @@ class Combobox_Autocomplete(Entry, object):
                 self._listbox.activate(index)
         return "break"
 
-
+    def _delete(self):
+        if self._listbox is not None:
+            return "break"
 
 if __name__ == '__main__':
     try:
@@ -345,22 +278,22 @@ if __name__ == '__main__':
     except ImportError:
         from tkinter import Tk
 
-    list_of_items = ["Cordell Cannata", "Lacey Naples", "Zachery Manigault", "Regan Brunt", "Mario Hilgefort", "Austin Phong", "Moises Saum", "Willy Neill", "Rosendo Sokoloff", "Salley Christenberry", "Toby Schneller", "Angel Buchwald", "Nestor Criger", "Arie Jozwiak", "Nita Montelongo", "Clemencia Okane", "Alison Scaggs", "Von Petrella", "Glennie Gurley", "Jamar Callender", "Titus Wenrich", "Chadwick Liedtke", "Sharlene Yochum", "Leonida Mutchler", "Duane Pickett", "Morton Brackins", "Ervin Trundy", "Antony Orwig", "Audrea Yutzy", "Michal Hepp", "Annelle Hoadley", "Hank Wyman", "Mika Fernandez", "Elisa Legendre", "Sade Nicolson", "Jessie Yi", "Forrest Mooneyhan", "Alvin Widell", "Lizette Ruppe", "Marguerita Pilarski", "Merna Argento", "Jess Daquila", "Breann Bevans", "Melvin Guidry", "Jacelyn Vanleer", "Jerome Riendeau", "Iraida Nyquist", "Micah Glantz", "Dorene Waldrip", "Fidel Garey", "Vertie Deady", "Rosalinda Odegaard", "Chong Hayner", "Candida Palazzolo", "Bennie Faison", "Nova Bunkley", "Francis Buckwalter", "Georgianne Espinal", "Karleen Dockins", "Hertha Lucus", "Ike Alberty", "Deangelo Revelle", "Juli Gallup", "Wendie Eisner", "Khalilah Travers", "Rex Outman", "Anabel King", "Lorelei Tardiff", "Pablo Berkey", "Mariel Tutino", "Leigh Marciano", "Ok Nadeau", "Zachary Antrim", "Chun Matthew", "Golden Keniston", "Anthony Johson", "Rossana Ahlstrom", "Amado Schluter", "Delila Lovelady", "Josef Belle", "Leif Negrete", "Alec Doss", "Darryl Stryker", "Michael Cagley", "Sabina Alejo", "Delana Mewborn", "Aurelio Crouch", "Ashlie Shulman", "Danielle Conlan", "Randal Donnell", "Rheba Anzalone", "Lilian Truax", "Weston Quarterman", "Britt Brunt", "Leonie Corbett", "Monika Gamet", "Ingeborg Bello", "Angelique Zhang", "Santiago Thibeau", "Eliseo Helmuth"]
-
+    # list_of_items = ["Cordell Cannata sam", "Lacey Naples", "Zachery Manigault", "Regan Brunt", "Mario Hilgefort",
+    #                  "Austin Phong", "Moises Saum", "Willy Neill", "Rosendo Sokoloff", "Salley Christenberry", "Toby Schneller", "Angel Buchwald", "Nestor Criger", "Arie Jozwiak", "Nita Montelongo", "Clemencia Okane", "Alison Scaggs", "Von Petrella", "Glennie Gurley", "Jamar Callender", "Titus Wenrich", "Chadwick Liedtke", "Sharlene Yochum", "Leonida Mutchler", "Duane Pickett", "Morton Brackins", "Ervin Trundy", "Antony Orwig", "Audrea Yutzy", "Michal Hepp", "Annelle Hoadley", "Hank Wyman", "Mika Fernandez", "Elisa Legendre", "Sade Nicolson", "Jessie Yi", "Forrest Mooneyhan", "Alvin Widell", "Lizette Ruppe", "Marguerita Pilarski", "Merna Argento", "Jess Daquila", "Breann Bevans", "Melvin Guidry", "Jacelyn Vanleer", "Jerome Riendeau", "Iraida Nyquist", "Micah Glantz", "Dorene Waldrip", "Fidel Garey", "Vertie Deady", "Rosalinda Odegaard", "Chong Hayner", "Candida Palazzolo", "Bennie Faison", "Nova Bunkley", "Francis Buckwalter", "Georgianne Espinal", "Karleen Dockins", "Hertha Lucus", "Ike Alberty", "Deangelo Revelle", "Juli Gallup", "Wendie Eisner", "Khalilah Travers", "Rex Outman", "Anabel King", "Lorelei Tardiff", "Pablo Berkey", "Mariel Tutino", "Leigh Marciano", "Ok Nadeau", "Zachary Antrim", "Chun Matthew", "Golden Keniston", "Anthony Johson", "Rossana Ahlstrom", "Amado Schluter", "Delila Lovelady", "Josef Belle", "Leif Negrete", "Alec Doss", "Darryl Stryker", "Michael Cagley", "Sabina Alejo", "Delana Mewborn", "Aurelio Crouch", "Ashlie Shulman", "Danielle Conlan", "Randal Donnell", "Rheba Anzalone", "Lilian Truax", "Weston Quarterman", "Britt Brunt", "Leonie Corbett", "Monika Gamet", "Ingeborg Bello", "Angelique Zhang", "Santiago Thibeau", "Eliseo Helmuth"]
+    list_of_items = []
     root = Tk()
     root.title("Information Retrieval")
-    root.geometry("400x300")
+    root.geometry("600x600")
     root.configure(background='#66cc00')
 
     my_pic = PIL.Image.open("Images/avo2.png")
-    resized = my_pic.resize((150,100))
+    resized = my_pic.resize((200,120))
     img = ImageTk.PhotoImage(resized)
-    # img = ImageTk.PhotoImage(file="Images/avocado.jpg")
 
     Label(root, bg='#66cc00', image=img, font = ('Times',21), text='AVO-cado Query').pack()
-    combobox_autocomplete = Combobox_Autocomplete(root, list_of_items, highlightthickness=1)
+    combobox_autocomplete = Combobox_Autocomplete(root, list_of_items, width=30, highlightthickness=1)
     combobox_autocomplete.pack()
-    Button(root, text="QUIT", fg="red", command=quit, bg='#66cc00', highlightbackground='#66cc00').pack()
+    Button(root, text="SEARCH", fg="red",command=quit, highlightbackground='#66cc00').pack()
 
     combobox_autocomplete.focus()
 
