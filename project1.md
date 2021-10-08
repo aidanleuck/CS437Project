@@ -3,7 +3,7 @@
 # User Interface - Medium (maybe easy?) - Victor
 Use graphics.py to set up necessary graphical connections to backend. Needs to be able to display query suggestions, ranked list of results, and allow users to submit queries.
 
-# Text Processing, Stopwords, Stemming - Easy - Oscar
+# Text Processing, Stopwords, Stemming - Easy - Oscar [DONE]
 Implement tokenizer (HW2), remove stopwords (Zipf's law?) (HW2), stem or lem non-stopwords (HW2), create index structure for dc (HW3).
 
 # Suggesting Queries - Hard - Aidan
