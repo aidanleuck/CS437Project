@@ -2,14 +2,18 @@ import os
 import sys
 
 import constants as constant
+from Models.Query import QueryModel
 
 # Adds the modules inside the project directory to the system path
 sys.path.append(constant.PROJECTDIR)
 
-import Models.Query as Query
-from QLog.QueryLogParser import QueryLogParser
+from QLog.QuerySuggester import QuerySuggester
+
 
 if(__name__ == "__main__"):
-    parser = QueryLogParser()
-    parser.mergeQueryLogs()
-    print("Hello")
+    query = "how to buy a"
+    suggester = QuerySuggester()
+    suggestions = suggester.getQuerySuggestions(query)
+    print(suggestions)
+    
+    

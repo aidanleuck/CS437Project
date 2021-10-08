@@ -9,3 +9,4 @@ Clean-Data-04.txt
 Clean-Data-05.txt
 __pycache__/
 BeegFiles/project_1_Wiki_sample_large.csv
+*.pickle
