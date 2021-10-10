@@ -10,3 +10,4 @@ Clean-Data-05.txt
 __pycache__/
 BeegFiles/project_1_Wiki_sample_large.csv
 *.pickle
+doc_index_large.pkl
