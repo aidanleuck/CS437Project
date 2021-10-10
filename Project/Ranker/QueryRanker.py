@@ -18,7 +18,7 @@ class QueryRanker:
             documentID = document.id
             rank = self.__calc_TFIDF(document, frequency, keyListLength)
             self.rankIndex[documentID] = rank
-        self.rankIndex = sortedDict = dict(sorted(self.rankIndex.items(),key=lambda item: item[1],reverse=True))
+        self.rankIndex = dict(sorted(self.rankIndex.items(),key=lambda item: item[1],reverse=True))
         return self.rankIndex.keys()
             
 
