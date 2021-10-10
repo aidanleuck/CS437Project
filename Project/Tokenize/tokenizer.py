@@ -4,22 +4,25 @@ import matplotlib.pyplot as plt
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 import re
+import constants as constant
+import pickle
+from Tokenize.document import Document
 
 class Tokenizer:
 
-    def __init__(self, dataset):
-        self.dataset = dataset
+    def __init__(self):
+        print("Tokenizer initialized")
 
     def clean_line(self, line):
         # Remove the following punctuation: ,."“/)(\[]{}!?:;'$&% and other random punctuation from strange csv file
         regexPunc = r',|\.|\"|\“|\/|\)|\(|\\|\[|\]|\{|\}|\!|\?|\:|\;|\'|\$|\&|\%'
         return re.sub(regexPunc, '', line) # Get rid of punctuation"
 
-    def generate_stopwords(self):
+    def generate_stopwords(self, dataset):
         unigram_dict = {}
         stop_words = set(stopwords.words('english'))
 
-        with open(self.dataset, encoding="utf8") as csv_file:
+        with open(dataset, encoding="utf8") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
             for row in csv_reader:
@@ -45,11 +48,12 @@ class Tokenizer:
         stop_words.update(set(new_stop_words))
         return stop_words
 
-    def generate_index(self, stop_words):
+    def generate_index(self, stop_words, dataset):
         ps = PorterStemmer()
         index = {}
+        doc_index = {}
 
-        with open(self.dataset, encoding="utf8") as csv_file:
+        with open(dataset, encoding="utf8") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
             for row in csv_reader:
@@ -57,11 +61,13 @@ class Tokenizer:
                     print(f'Column names are {", ".join(row)}')
                     line_count += 1
                 else:
+                    doc = Document(row[1], row[0], line_count)
                     row = self.clean_line(row[0])
                     tokens = nltk.word_tokenize(row)
                     for word in tokens:
                         word = word.lower()
                         if word not in stop_words:
+                            doc.word_count += 1
                             word = ps.stem(word)
                             if index.get(word):
                                 if index[word].get(line_count-1):
@@ -75,5 +81,8 @@ class Tokenizer:
                                 index[word] = {}
                                 index[word][line_count-1] = 1
                     line_count += 1
+                    doc_index[doc.id] = doc
+            with open(constant.DOC_PATH, 'wb') as outp:
+                pickle.dump(doc_index, outp, -1)
             print(str(line_count) + " lines read.")
         return index
