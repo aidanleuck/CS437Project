@@ -13,6 +13,8 @@ except ImportError:
 
 from QLog.QuerySuggester import QuerySuggester
 
+
+
 def autoscroll(sbar, first, last):
     """Hide and show scrollbar as needed."""
     first, last = float(first), float(last)
@@ -21,7 +23,6 @@ def autoscroll(sbar, first, last):
     else:
         sbar.grid()
     sbar.set(first, last)
-
 
 class Combobox_Autocomplete(Entry, object):
     def __init__(self, master, list_of_items=None, autocomplete_function=None, listbox_width=None, listbox_height=7, ignorecase_match=False, startswith_match=True, vscrollbar=True, hscrollbar=True, **kwargs):
@@ -272,14 +273,18 @@ class Combobox_Autocomplete(Entry, object):
         if self._listbox is not None:
             return "break"
 
+def build_search(combo_val):
+    Button(root, text="SEARCH", fg="red",command=build_search,highlightbackground='#66cc00')
+
+    Listbox(root, bg="white",width=650, height=550).pack(padx=5, pady=5)
+
+
 if __name__ == '__main__':
     try:
         from tkinter import Tk
     except ImportError:
         from tkinter import Tk
 
-    # list_of_items = ["Cordell Cannata sam", "Lacey Naples", "Zachery Manigault", "Regan Brunt", "Mario Hilgefort",
-    #                  "Austin Phong", "Moises Saum", "Willy Neill", "Rosendo Sokoloff", "Salley Christenberry", "Toby Schneller", "Angel Buchwald", "Nestor Criger", "Arie Jozwiak", "Nita Montelongo", "Clemencia Okane", "Alison Scaggs", "Von Petrella", "Glennie Gurley", "Jamar Callender", "Titus Wenrich", "Chadwick Liedtke", "Sharlene Yochum", "Leonida Mutchler", "Duane Pickett", "Morton Brackins", "Ervin Trundy", "Antony Orwig", "Audrea Yutzy", "Michal Hepp", "Annelle Hoadley", "Hank Wyman", "Mika Fernandez", "Elisa Legendre", "Sade Nicolson", "Jessie Yi", "Forrest Mooneyhan", "Alvin Widell", "Lizette Ruppe", "Marguerita Pilarski", "Merna Argento", "Jess Daquila", "Breann Bevans", "Melvin Guidry", "Jacelyn Vanleer", "Jerome Riendeau", "Iraida Nyquist", "Micah Glantz", "Dorene Waldrip", "Fidel Garey", "Vertie Deady", "Rosalinda Odegaard", "Chong Hayner", "Candida Palazzolo", "Bennie Faison", "Nova Bunkley", "Francis Buckwalter", "Georgianne Espinal", "Karleen Dockins", "Hertha Lucus", "Ike Alberty", "Deangelo Revelle", "Juli Gallup", "Wendie Eisner", "Khalilah Travers", "Rex Outman", "Anabel King", "Lorelei Tardiff", "Pablo Berkey", "Mariel Tutino", "Leigh Marciano", "Ok Nadeau", "Zachary Antrim", "Chun Matthew", "Golden Keniston", "Anthony Johson", "Rossana Ahlstrom", "Amado Schluter", "Delila Lovelady", "Josef Belle", "Leif Negrete", "Alec Doss", "Darryl Stryker", "Michael Cagley", "Sabina Alejo", "Delana Mewborn", "Aurelio Crouch", "Ashlie Shulman", "Danielle Conlan", "Randal Donnell", "Rheba Anzalone", "Lilian Truax", "Weston Quarterman", "Britt Brunt", "Leonie Corbett", "Monika Gamet", "Ingeborg Bello", "Angelique Zhang", "Santiago Thibeau", "Eliseo Helmuth"]
     list_of_items = []
     root = Tk()
     root.title("Information Retrieval")
@@ -293,7 +298,8 @@ if __name__ == '__main__':
     Label(root, bg='#66cc00', image=img, font = ('Times',21), text='AVO-cado Query').pack()
     combobox_autocomplete = Combobox_Autocomplete(root, list_of_items, width=30, highlightthickness=1)
     combobox_autocomplete.pack()
-    Button(root, text="SEARCH", fg="red",command=quit, highlightbackground='#66cc00').pack()
+    Button(root, text="SEARCH", fg="red",command=lambda:build_search(combobox_autocomplete.get_value()),
+           highlightbackground='#66cc00').pack()
 
     combobox_autocomplete.focus()
 
