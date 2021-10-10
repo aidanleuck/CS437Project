@@ -61,7 +61,7 @@ class Tokenizer:
                     print(f'Column names are {", ".join(row)}')
                     line_count += 1
                 else:
-                    doc = Document(row[1], row[0], line_count)
+                    doc = Document(row[1], row[0], line_count-1)
                     row = self.clean_line(row[0])
                     tokens = nltk.word_tokenize(row)
                     for word in tokens:
