@@ -273,11 +273,17 @@ class Combobox_Autocomplete(Entry, object):
         if self._listbox is not None:
             return "break"
 
-def build_search(combo_val):
-    Button(root, text="SEARCH", fg="red",command=build_search,highlightbackground='#66cc00')
+# def build_search(combo_val):
+#     Button(root, text="SEARCH", fg="red",command=build_search,highlightbackground='#66cc00')
 
-    Listbox(root, bg="white",width=650, height=550).pack(padx=5, pady=5)
+    # lb = Listbox(root, bg="white",width=650,height=550).pack(padx=5, pady=5)
 
+def build_search(lb, param):
+    lb.delete(0,END)
+    lb.insert(1,param)
+    # lb.insert(2,"Hi")
+    # lb.insert(3,"Everyone")
+    lb.pack(padx=5, pady=5)
 
 if __name__ == '__main__':
     try:
@@ -298,8 +304,10 @@ if __name__ == '__main__':
     Label(root, bg='#66cc00', image=img, font = ('Times',21), text='AVO-cado Query').pack()
     combobox_autocomplete = Combobox_Autocomplete(root, list_of_items, width=30, highlightthickness=1)
     combobox_autocomplete.pack()
-    Button(root, text="SEARCH", fg="red",command=lambda:build_search(combobox_autocomplete.get_value()),
+    lb = Listbox(root,bg="white",width=650,height=550)
+    Button(root, text="SEARCH", fg="red",command=lambda:build_search(lb,combobox_autocomplete.get_value()),
            highlightbackground='#66cc00').pack()
+
 
     combobox_autocomplete.focus()
 
