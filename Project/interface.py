@@ -7,6 +7,9 @@ from identify_candidate_resources import Identifier
 from Ranker.QueryRanker import QueryRanker
 import constants as constant
 import pickle
+from Tokenize.tokenizer import Tokenizer
+import re
+from snippet import Snippet
 
 try:
     from tkinter import StringVar, Entry, Frame, Listbox, Scrollbar, Label, Button, PhotoImage, Image
@@ -277,6 +280,27 @@ class Combobox_Autocomplete(Entry, object):
         if self._listbox is not None:
             return "break"
 
+def get_snippets(results, query):
+    snippets = []
+    t = Tokenizer()
+    query = t.clean_line(query) # clean query
+    query_words = query.split() # get words from query
+    for doc in results:
+        sentences = re.split(r"[.?!]\s*", doc.text) # split on sentences
+        sentences_pq = []
+        for sentence in sentences: # loop through sentences
+            if any(word in sentence for word in query_words): # if sentence contains words in query
+                tf_idf = 0 # find tfidf of sentence
+                sentences_pq.append((tf_idf, sentence)) # store sentence along with tfidf val in prio q
+        count = 0
+        sentences_pq.sort(reverse=True)
+        snip_sentences = []
+        while sentences_pq and count < 2: # grab two sentences (or less) with associated highest value
+            snip_sentences.append(sentences_pq.pop(0)[1])
+            count += 1
+        snippet = Snippet(doc.title, snip_sentences) # create a new snippet object, setting the sentences and the title.
+        snippets.append(snippet) # add it to snippets
+    return snippets# return snippets
 
 def generate_results(combo_val):
     with open(constant.INDEX_PATH, 'rb') as i:
@@ -286,6 +310,8 @@ def generate_results(combo_val):
     identifier = Identifier(combo_val, index, stop_words)
     qr = QueryRanker(combo_val, index, stop_words)
     results = qr.getRanks(identifier.filter_query())
+    snippetList = get_snippets(results, combo_val)
+    return snippetList
 
 # def build_search(combo_val):
 #     Button(root, text="SEARCH", fg="red",command=build_search,highlightbackground='#66cc00')
@@ -298,6 +324,7 @@ def build_search(lb, param):
     # lb.insert(2,"Hi")
     # lb.insert(3,"Everyone")
     lb.pack(padx=5, pady=5)
+    result = generate_results(param)
 
 if __name__ == '__main__':
     try:
