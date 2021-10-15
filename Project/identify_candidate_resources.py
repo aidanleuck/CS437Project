@@ -6,15 +6,11 @@ from Tokenize.tokenizer import Tokenizer
 
 class Identifier:
 
-    def __init__(self, query):
+    def __init__(self, query, index, stop_words):
         self.query = query
         self.documents = {}
-        with open(constant.INDEX_PATH, 'rb') as i:
-            self.index = pickle.load(i)
-        print("index initialized")
-        with open(constant.STOPWORD_PATH, 'rb') as sw:
-            self.stop_words = pickle.load(sw)
-        print("stop_words, identifier initialized.")
+        self.index = index
+        self.stop_words = stop_words
 
     def filter_query(self):
         ps = PorterStemmer()

@@ -3,6 +3,10 @@ from tkinter import *
 import PIL
 from PIL import ImageTk
 from PIL import Image
+from identify_candidate_resources import Identifier
+from Ranker.QueryRanker import QueryRanker
+import constants as constant
+import pickle
 
 try:
     from tkinter import StringVar, Entry, Frame, Listbox, Scrollbar, Label, Button, PhotoImage, Image
@@ -275,9 +279,17 @@ class Combobox_Autocomplete(Entry, object):
 
 def build_search(combo_val):
     Button(root, text="SEARCH", fg="red",command=build_search,highlightbackground='#66cc00')
-
+    results = generate_results(combo_val)
     Listbox(root, bg="white",width=650, height=550).pack(padx=5, pady=5)
 
+def generate_results(combo_val):
+    with open(constant.INDEX_PATH, 'rb') as i:
+        index = pickle.load(i)
+    with open(constant.STOPWORD_PATH, 'rb') as sw:
+        stop_words = pickle.load(sw)
+    identifier = Identifier(combo_val, index, stop_words)
+    qr = QueryRanker(combo_val, index, stop_words)
+    results = qr.getRanks(identifier.filter_query())
 
 if __name__ == '__main__':
     try:

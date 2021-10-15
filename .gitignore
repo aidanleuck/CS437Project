@@ -11,3 +11,6 @@ __pycache__/
 BeegFiles/project_1_Wiki_sample_large.csv
 *.pickle
 doc_index_large.pkl
+Project/Data/QLog/Frequencies/*
+.gitignore
+doc_index.pkl

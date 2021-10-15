@@ -8,16 +8,14 @@ from nltk.stem import PorterStemmer
 from Tokenize.tokenizer import Tokenizer
 
 class QueryRanker:
-    def __init__(self, query):
+    def __init__(self, query, index, stop_words):
         self.query = query
         with open(constant.DOC_PATH, 'rb') as i:
             self.docIndex = pickle.load(i)
-        with open(constant.INDEX_PATH, 'rb') as i:
-            self.index = pickle.load(i)
-        with open(constant.STOPWORD_PATH, 'rb') as sw:
-            self.stop_words = pickle.load(sw)
+        self.index = index
+        self.stop_words = stop_words
         self.rankIndex = {}
-    
+
     def __calc_TFIDF(self, document, frequency, resourceAppears):
         totalTokens = document.word_count
         resourceCount = len(self.docIndex)
@@ -40,17 +38,8 @@ class QueryRanker:
                     value = documentList.get(document.id)
                     if(value is not None):
                         frequency = documentList.get(document.id)
-                        numberOfDocs = len(documentList)   
+                        numberOfDocs = len(documentList)
                         rank += self.__calc_TFIDF(document, frequency, numberOfDocs)
             self.rankIndex[document] = rank
         self.rankIndex = dict(sorted(self.rankIndex.items(),key=lambda item: item[1],reverse=True))
         return list(self.rankIndex.keys())
-            
-
-
-
-
-
-
-
-        
