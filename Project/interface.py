@@ -321,11 +321,13 @@ def generate_results(combo_val):
 def build_search(lb, param):
     lb.delete(0,END)
     result = generate_results(param)
-    i = 0
-    for keys in result:
-        lb.insert("end",keys.title)
-        lb.insert("end",keys.sentences)
-        lb.insert("end","\n")
+    if(result):
+        for keys in result:
+            lb.insert("end",keys.title)
+            lb.insert("end",keys.sentences)
+            lb.insert("end","\n")
+    else:
+        lb.insert("end","No Search Results")
     # lb.insert(2,"Hi")
     # lb.insert(3,"Everyone")
     lb.pack(padx=5, pady=5)
