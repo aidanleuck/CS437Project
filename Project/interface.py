@@ -307,31 +307,24 @@ def generate_results(combo_val):
         index = pickle.load(i)
     with open(constant.STOPWORD_PATH, 'rb') as sw:
         stop_words = pickle.load(sw)
-    identifier = Identifier(combo_val, index, stop_words)
+    identifier = Identifier(combo_val.strip(), index, stop_words)
     qr = QueryRanker(combo_val, index, stop_words)
     results = qr.getRanks(identifier.filter_query())
     snippetList = get_snippets(results, combo_val)
     return snippetList
 
-# def build_search(combo_val):
-#     Button(root, text="SEARCH", fg="red",command=build_search,highlightbackground='#66cc00')
-
-    # lb = Listbox(root, bg="white",width=650,height=550).pack(padx=5, pady=5)
-
 def build_search(lb, param):
-    lb.delete(0,END)
+    lb.delete('1.0',END)
+    lb.tag_config('heading', foreground="BLUE")
     result = generate_results(param)
     if(result):
         for keys in result:
-            lb.insert("end",keys.title)
-            lb.insert("end",keys.sentences)
-            lb.insert("end","\n")
+            lb.insert(INSERT, keys.title + "\n", 'heading')
+            lb.insert(END, keys.sentences.replace('\n\n', '...') + "\n\n")
     else:
-        lb.insert("end","No Search Results")
-    # lb.insert(2,"Hi")
-    # lb.insert(3,"Everyone")
+        lb.insert(INSERT,"No Search Results")
     lb.pack(padx=5, pady=5)
-    # result = generate_results(param)
+
 
 if __name__ == '__main__':
     try:
@@ -352,8 +345,8 @@ if __name__ == '__main__':
     Label(root, bg='#66cc00', image=img, font = ('Times',21), text='AVO-cado Query').pack()
     combobox_autocomplete = Combobox_Autocomplete(root, list_of_items, width=30, highlightthickness=1)
     combobox_autocomplete.pack()
-    lb = Listbox(root,bg="white",width=650,height=550)
-    Button(root, text="SEARCH", fg="red",command=lambda:build_search(lb,combobox_autocomplete.get_value()),
+    lb = Text(root,bg="white",width=650,height=550, wrap=WORD)
+    Button(root, text="SEARCH", fg="red",command=lambda:build_search(lb, combobox_autocomplete.get_value().strip()),
            highlightbackground='#66cc00').pack()
 
 
