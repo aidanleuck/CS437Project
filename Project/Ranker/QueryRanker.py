@@ -1,6 +1,7 @@
 from Tokenize.document import Document
 import constants as constant
 import pickle
+import Global as globals
 
 import constants as constant
 import nltk
@@ -15,12 +16,6 @@ class QueryRanker:
         self.index = index
         self.stop_words = stop_words
         self.rankIndex = {}
-
-    def __calc_TFIDF(self, document, frequency, resourceAppears):
-        totalTokens = document.word_count
-        resourceCount = len(self.docIndex)
-        weight = (frequency/totalTokens) * (resourceCount/resourceAppears)
-        return weight
     def getRanks(self, keyList):
         s = PorterStemmer()
         tokenizer = Tokenizer()
@@ -39,7 +34,9 @@ class QueryRanker:
                     if(value is not None):
                         frequency = documentList.get(document.id)
                         numberOfDocs = len(documentList)
-                        rank += self.__calc_TFIDF(document, frequency, numberOfDocs)
+                        totalTokens = document.word_count
+                        resourceCount = len(self.docIndex)
+                        rank += globals.calc_TFIDF(frequency, totalTokens, resourceCount, numberOfDocs)
             self.rankIndex[document] = rank
         self.rankIndex = dict(sorted(self.rankIndex.items(),key=lambda item: item[1],reverse=True))
         return list(self.rankIndex.keys())

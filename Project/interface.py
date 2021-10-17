@@ -9,7 +9,10 @@ import constants as constant
 import pickle
 from Tokenize.tokenizer import Tokenizer
 import re
+import Global as globals
 from snippet import Snippet
+from collections import defaultdict
+
 
 try:
     from tkinter import StringVar, Entry, Frame, Listbox, Scrollbar, Label, Button, PhotoImage, Image
@@ -288,9 +291,34 @@ def get_snippets(results, query):
     for doc in results:
         sentences = re.split(r"[.?!]\s*", doc.text) # split on sentences
         sentences_pq = []
+
+        query_wordFreq = {}
         for sentence in sentences: # loop through sentences
+            sentence = sentence.lower()
+            for queryWord in query_words:
+                count = sentence.count(queryWord)
+                if(count > 0):
+                    if(query_wordFreq.get(queryWord)):
+                        query_wordFreq[queryWord] +=count
+                    else:
+                        query_wordFreq[queryWord] = count
+        for sentence in sentences:
+            sentence = sentence.lower()
+            tokenFrequency = 0
+            totalTermFrequency = 0
+            tf_idf = 0
+            mostFrequentDict = defaultdict(int)
             if any(word in sentence for word in query_words): # if sentence contains words in query
-                tf_idf = 0 # find tfidf of sentence
+                for word in sentence.split(" "):
+                    mostFrequentDict[word] += 1
+                for queryWord in query_words:
+                    tokenFrequency = sentence.count(queryWord)
+                    mostFrequentTerm = max(mostFrequentDict, key=mostFrequentDict.get)
+                    frequentTerm = mostFrequentDict[mostFrequentTerm]
+                    numSentences = len(sentences)
+                    termFrequency = query_wordFreq[queryWord]
+
+                    tf_idf += globals.calc_TFIDF(tokenFrequency, frequentTerm, numSentences, termFrequency) # find tfidf of sentence
                 sentences_pq.append((tf_idf, sentence)) # store sentence along with tfidf val in prio q
         count = 0
         sentences_pq.sort(reverse=True)
