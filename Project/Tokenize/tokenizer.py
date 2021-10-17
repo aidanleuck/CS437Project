@@ -21,10 +21,12 @@ class Tokenizer:
     def generate_stopwords(self, dataset):
         unigram_dict = {}
         stop_words = set(stopwords.words('english'))
+        count_words = 0
 
         with open(dataset, encoding="utf8") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
+            count_multi = 0
             for row in csv_reader:
                 if line_count == 0:
                     print(f'Column names are {", ".join(row)}')
@@ -33,19 +35,23 @@ class Tokenizer:
                     row = self.clean_line(row[0])
                     uni_tokens = nltk.word_tokenize(row)
                     for word in uni_tokens:
+                        count_words += 1
                         word = word.lower()
                         if word not in stop_words:
                             freq = unigram_dict.get(word)
                             if freq:
                                 unigram_dict[word] += 1
+                                count_multi += 1
                             else:
                                 unigram_dict[word] = 1
                     line_count += 1
-            print(str(line_count) + " lines read.")
         uni_sorted = dict(sorted(unigram_dict.items(), key=lambda item: item[1], reverse=True))
         keys = list(uni_sorted.keys())
         new_stop_words = list(uni_sorted.keys())[0:int(len(keys)/1000)] # add top .1% to the stopwords list
         stop_words.update(set(new_stop_words))
+        print("Num added stopwords - " + str(len(new_stop_words)))
+        print("Num Total Stopwords - " + str(len(stop_words)))
+        print("Num words before stopword removal - " + str(count_words))
         return stop_words
 
     def generate_index(self, stop_words, dataset):
@@ -56,6 +62,7 @@ class Tokenizer:
         with open(dataset, encoding="utf8") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             line_count = 0
+            count_words = 0
             for row in csv_reader:
                 if line_count == 0:
                     print(f'Column names are {", ".join(row)}')
@@ -67,6 +74,7 @@ class Tokenizer:
                     for word in tokens:
                         word = word.lower()
                         if word not in stop_words:
+                            count_words += 1
                             doc.word_count += 1
                             word = ps.stem(word)
                             if index.get(word):
@@ -84,5 +92,7 @@ class Tokenizer:
                     doc_index[doc.id] = doc
             with open(constant.DOC_PATH, 'wb') as outp:
                 pickle.dump(doc_index, outp, -1)
-            print(str(line_count) + " lines read.")
+            print("Total indexed words - " + str(len(index)))
+            print("Num Documents - " + str(len(doc_index)))
+            print("Num Words read - " + str(count_words))
         return index

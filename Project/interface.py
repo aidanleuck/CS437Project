@@ -297,7 +297,7 @@ def get_snippets(results, query):
         for sentence in sentences: # loop through sentences
             sentence = sentence.lower()
             for queryWord in query_words:
-                count = sentence.count(queryWord)
+                count = sentence.count(" "+queryWord+" ")
                 if(count > 0):
                     if(query_wordFreq.get(queryWord)):
                         query_wordFreq[queryWord] +=count
@@ -317,8 +317,9 @@ def get_snippets(results, query):
                     mostFrequentTerm = max(mostFrequentDict, key=mostFrequentDict.get)
                     frequentTerm = mostFrequentDict[mostFrequentTerm]
                     numSentences = len(sentences)
-                    termFrequency = query_wordFreq[queryWord]
-
+                    termFrequency = query_wordFreq.get(queryWord)
+                    if not termFrequency:
+                        termFrequency = 0
                     tf_idf += globals.calc_TFIDF(tokenFrequency, frequentTerm, numSentences, termFrequency) # find tfidf of sentence
                 sentences_pq.append((tf_idf, sentence)) # store sentence along with tfidf val in prio q
         count = 0
