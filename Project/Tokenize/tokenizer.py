@@ -15,7 +15,7 @@ class Tokenizer:
 
     def clean_line(self, line):
         # Remove the following punctuation: ,."“/)(\[]{}!?:;'$&% and other random punctuation from strange csv file
-        regexPunc = r',|\.|\"|\“|\/|\)|\(|\\|\[|\]|\{|\}|\!|\?|\:|\;|\'|\$|\&|\%'
+        regexPunc = r',|\.|\"|\“|\/|\)|\(|\\|\[|\]|\{|\}|\!|\?|\:|\;|\'|\$|\&|\%|\-|1|2|3|4|5|6|7|8|9|\0'
         return re.sub(regexPunc, '', line) # Get rid of punctuation"
 
     def generate_stopwords(self, dataset):
@@ -44,7 +44,7 @@ class Tokenizer:
             print(str(line_count) + " lines read.")
         uni_sorted = dict(sorted(unigram_dict.items(), key=lambda item: item[1], reverse=True))
         keys = list(uni_sorted.keys())
-        new_stop_words = list(uni_sorted.keys())[0:int(len(keys)/20)] # add top 5% to the stopwords list
+        new_stop_words = list(uni_sorted.keys())[0:int(len(keys)/1000)] # add top .1% to the stopwords list
         stop_words.update(set(new_stop_words))
         return stop_words
 

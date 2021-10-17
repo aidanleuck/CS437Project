@@ -289,6 +289,7 @@ def get_snippets(results, query):
     query = t.clean_line(query) # clean query
     query_words = query.split() # get words from query
     for doc in results:
+        doc.text = re.sub(r"\n\n", '. ', doc.text)
         sentences = re.split(r"[.?!]\s*", doc.text) # split on sentences
         sentences_pq = []
 
@@ -348,7 +349,7 @@ def build_search(lb, param):
     if(result):
         for keys in result:
             lb.insert(INSERT, keys.title + "\n", 'heading')
-            lb.insert(END, keys.sentences.replace('\n\n', '...') + "\n\n")
+            lb.insert(END, keys.sentences + "\n\n")
     else:
         lb.insert(INSERT,"No Search Results")
     lb.pack(padx=5, pady=5)
