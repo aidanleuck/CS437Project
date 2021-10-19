@@ -38,5 +38,6 @@ class QueryRanker:
                         resourceCount = len(self.docIndex)
                         rank += globals.calc_TFIDF(frequency, totalTokens, resourceCount, numberOfDocs)
             self.rankIndex[document] = rank
+            print("Document: " + str(document.id) + ", Rankscore: " + str(rank))
         self.rankIndex = dict(sorted(self.rankIndex.items(),key=lambda item: item[1],reverse=True))
         return list(self.rankIndex.keys())
