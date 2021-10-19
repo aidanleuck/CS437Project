@@ -286,7 +286,7 @@ class Combobox_Autocomplete(Entry, object):
 def get_snippets(results, query):
     snippets = []
     t = Tokenizer()
-    query = t.clean_line(query) # clean query
+    query = t.clean_line(query).lower() # clean query
     query_words = query.split() # get words from query
     for doc in results:
         doc.text = re.sub(r"\n\n", '. ', doc.text)
