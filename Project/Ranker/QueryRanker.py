@@ -11,7 +11,7 @@ from Tokenize.tokenizer import Tokenizer
 class QueryRanker:
     def __init__(self, query, index, stop_words):
         self.query = query
-        with open(constant.DOC_PATH, 'rb') as i:
+        with open(constant.BASEDIR + constant.DOC_PATH, 'rb') as i:
             self.docIndex = pickle.load(i)
         self.index = index
         self.stop_words = stop_words
@@ -38,6 +38,6 @@ class QueryRanker:
                         resourceCount = len(self.docIndex)
                         rank += globals.calc_TFIDF(frequency, totalTokens, resourceCount, numberOfDocs)
             self.rankIndex[document] = rank
-            print("Document: " + str(document.id) + ", Rankscore: " + str(rank))
+            # print("Document: " + str(document.id) + ", Rankscore: " + str(rank))
         self.rankIndex = dict(sorted(self.rankIndex.items(),key=lambda item: item[1],reverse=True))
         return list(self.rankIndex.keys())

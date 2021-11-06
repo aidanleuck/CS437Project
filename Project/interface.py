@@ -12,7 +12,7 @@ import re
 import Global as globals
 from snippet import Snippet
 from collections import defaultdict
-
+from better_profanity import profanity
 
 try:
     from tkinter import StringVar, Entry, Frame, Listbox, Scrollbar, Label, Button, PhotoImage, Image
@@ -328,14 +328,16 @@ def get_snippets(results, query):
         while sentences_pq and count < 2: # grab two sentences (or less) with associated highest value
             snip_sentences.append(sentences_pq.pop(0)[1])
             count += 1
-        snippet = Snippet(doc.title, snip_sentences) # create a new snippet object, setting the sentences and the title.
+        snippet = Snippet(doc.id,doc.title, snip_sentences) # create a new snippet object, setting the sentences and
+        # the
+        # title.
         snippets.append(snippet) # add it to snippets
     return snippets# return snippets
 
 def generate_results(combo_val):
-    with open(constant.INDEX_PATH, 'rb') as i:
+    with open(constant.BASEDIR + constant.INDEX_PATH, 'rb') as i:
         index = pickle.load(i)
-    with open(constant.STOPWORD_PATH, 'rb') as sw:
+    with open(constant.BASEDIR + constant.STOPWORD_PATH, 'rb') as sw:
         stop_words = pickle.load(sw)
     identifier = Identifier(combo_val.strip(), index, stop_words)
     qr = QueryRanker(combo_val, index, stop_words)
@@ -348,9 +350,11 @@ def build_search(lb, param):
     lb.tag_config('heading', foreground="BLUE")
     result = generate_results(param)
     if(result):
-        for keys in result:
-            lb.insert(INSERT, keys.title + "\n", 'heading')
-            lb.insert(END, keys.sentences + "\n\n")
+        for keys in result[0:10]:
+            #id = str(keys.id)
+            # lb.insert(INSERT, keys.title + " " + id + "\n", 'heading')
+            lb.insert(INSERT, profanity.censor(keys.title) + "\n", 'heading')
+            lb.insert(END, profanity.censor(keys.sentences) + "\n\n")
     else:
         lb.insert(INSERT,"No Search Results")
     lb.pack(padx=5, pady=5)
@@ -372,13 +376,12 @@ if __name__ == '__main__':
     resized = my_pic.resize((200,120))
     img = ImageTk.PhotoImage(resized)
 
-    Label(root, bg='#66cc00', image=img, font = ('Times',21), text='AVO-cado Query').pack()
+    Label(root, bg='#66cc00', image=img, font=('Times', 21), text='AVO-cado Query').pack()
     combobox_autocomplete = Combobox_Autocomplete(root, list_of_items, width=30, highlightthickness=1)
     combobox_autocomplete.pack()
     lb = Text(root,bg="white",width=650,height=550, wrap=WORD)
     Button(root, text="SEARCH", fg="red",command=lambda:build_search(lb, combobox_autocomplete.get_value().strip()),
            highlightbackground='#66cc00').pack()
-
 
     combobox_autocomplete.focus()
 

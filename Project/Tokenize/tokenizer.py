@@ -15,13 +15,14 @@ class Tokenizer:
 
     def clean_line(self, line):
         # Remove the following punctuation: ,."“/)(\[]{}!?:;'$&% and other random punctuation from strange csv file
-        regexPunc = r',|\.|\"|\“|\/|\)|\(|\\|\[|\]|\{|\}|\!|\?|\:|\;|\'|\$|\&|\%|\-|1|2|3|4|5|6|7|8|9|\0'
+        regexPunc = r',|\.|\"|\“|\/|\)|\(|\\|\[|\]|\{|\}|\!|\?|\:|\;|\'|\$|\&|\%|\-|1|2|3|4|5|6|7|8|9|0'
         return re.sub(regexPunc, '', line) # Get rid of punctuation"
 
     def generate_stopwords(self, dataset):
         unigram_dict = {}
         stop_words = set(stopwords.words('english'))
         count_words = 0
+        new_stop_words = {}
 
         with open(dataset, encoding="utf8") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
@@ -41,14 +42,20 @@ class Tokenizer:
                             freq = unigram_dict.get(word)
                             if freq:
                                 unigram_dict[word] += 1
-                                count_multi += 1
                             else:
-                                unigram_dict[word] = 1
+                                freq = new_stop_words.get(word)
+                                if freq:
+                                    unigram_dict[word] = 2
+                                    new_stop_words.pop(word)
+                                else:
+                                    new_stop_words[word] = 1
+
                     line_count += 1
         uni_sorted = dict(sorted(unigram_dict.items(), key=lambda item: item[1], reverse=True))
         keys = list(uni_sorted.keys())
-        new_stop_words = list(uni_sorted.keys())[0:int(len(keys)/1000)] # add top .1% to the stopwords list
-        stop_words.update(set(new_stop_words))
+        top_25 = list(uni_sorted.keys())[0:25] # add top 25 to the stopwords list
+        stop_words.update(set(top_25))
+        stop_words.update(set(new_stop_words.keys()))
         print("Num added stopwords - " + str(len(new_stop_words)))
         print("Num Total Stopwords - " + str(len(stop_words)))
         print("Num words before stopword removal - " + str(count_words))
@@ -90,7 +97,7 @@ class Tokenizer:
                                 index[word][line_count-1] = 1
                     line_count += 1
                     doc_index[doc.id] = doc
-            with open(constant.DOC_PATH, 'wb') as outp:
+            with open(constant.BASEDIR + constant.DOC_PATH, 'wb') as outp:
                 pickle.dump(doc_index, outp, -1)
             print("Total indexed words - " + str(len(index)))
             print("Num Documents - " + str(len(doc_index)))
